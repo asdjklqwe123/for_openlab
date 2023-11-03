@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排行榜</title>
+    <style>
+        div{
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+        }
+        h1 {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        table {
+            border-collapse: collapse;
+            margin: auto;
+            box-shadow: 0px 8px 8px #dedede;
+            width: 80%;
+        }
+        .green {
+            color: green;
+            font-weight: bold;
+        }
+
+        .red {
+            color: red;
+            font-weight: bold;
+        }
+
+        th {
+            border: 1px solid rgb(200, 200, 200);
+            width: 100px;
+        }
+
+        th,
+        td {
+            padding: 8px;
+        }
+
+        tbody {
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f7f7f7;
+        }
+
+        tr:hover {
+            background-color: rgb(222, 255, 244);
+            transition: background-color 0.1s ease;
+            font-weight: bold;
+            border: 1px solid rgb(128, 128, 128);
+        }
+
+        thead {
+            background-color: #efefef;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: large;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>排行榜</h1>
+        <img src="renew.png" alt="图片" width="60" height="60" onclick="renew()" title="刷新" >
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>姓名</th>
+                <th>学号</th>
+                <th>总分</th>
+                <th>第一题<div id="num1" style="color: grey; font-size: 10px;" ></div></th>
+                <th>第二题<div id="num2" style="color: grey; font-size: 10px;" ></div></th>
+                <th>第三题<div id="num3" style="color: grey; font-size: 10px;" ></div></th>
+                <th>第四题<div id="num4" style="color: grey; font-size: 10px;" ></div></th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    <script>
+        function renew() {
+            location.reload();
+        }
+        async function getdate() {
+            let res = await fetch('https://puzzle.qieee.top/api/rank')
+            let data = await res.json()
+            data.sort((a, b) => (b.score[0].score + b.score[1].score + b.score[2].score + b.score[3].score) - (a.score[0].score + a.score[1].score + a.score[2].score + a.score[3].score));
+            var tbody = document.querySelector('tbody');
+            for (var i = 0; i < data.length; i++) {
+                var tr = document.createElement('tr');
+                tbody.appendChild(tr);
+                var rankTd = document.createElement('td');
+                var name1 = document.createElement('td');
+                var id = document.createElement('td');
+                var sum = document.createElement('td');
+                rankTd.innerHTML = (i + 1);
+                name1.innerHTML = data[i].name;
+                id.innerHTML = data[i].id;
+                var sum1 = 0;
+                tr.appendChild(rankTd);//排名
+                tr.appendChild(name1);//名字
+                tr.appendChild(id);//id
+                tr.appendChild(sum);//总分
+                for (var j = 0; j < data[i].score.length; j++) {
+                    var score1 = document.createElement('td');
+                    if ((data[i].score[j].score) == 10) {
+                        score1.setAttribute("class", "green");
+                    }
+                    else {
+                        score1.setAttribute("class", "red");
+                    }
+                    score1.innerHTML = data[i].score[j].score;
+                    tr.appendChild(score1);
+                    sum1 = sum1 + data[i].score[j].score;
+                }
+                sum.innerHTML = sum1;
+            }
+        }
+        getdate();
+    </script>
+</body>
+
+</html>
