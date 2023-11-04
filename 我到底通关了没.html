@@ -6,20 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>排行榜</title>
     <style>
-        div{
+        div {
             display: flex;
             justify-content: center;
-            align-items: center; 
+            align-items: center;
         }
+
         h1 {
             font-family: 'Courier New', Courier, monospace;
         }
+
         table {
             border-collapse: collapse;
             margin: auto;
-            box-shadow: 0px 8px 8px #dedede;
+            box-shadow: 0px 8px 12px #dedede;
             width: 80%;
         }
+
         .green {
             color: green;
             font-weight: bold;
@@ -60,13 +63,16 @@
             font-family: 'Courier New', Courier, monospace;
             font-size: large;
         }
+        #num1{
+            color: red;
+        }
     </style>
 </head>
 
 <body>
     <div>
         <h1>排行榜</h1>
-        <img src="renew.png" alt="图片" width="60" height="60" onclick="renew()" title="刷新" >
+        <img src="renew.png" alt="图片" width="60" height="60" onclick="renew()" title="刷新">
     </div>
     <table>
         <thead>
@@ -75,10 +81,14 @@
                 <th>姓名</th>
                 <th>学号</th>
                 <th>总分</th>
-                <th>第一题<div id="num1" style="color: grey; font-size: 10px;" ></div></th>
-                <th>第二题<div id="num2" style="color: grey; font-size: 10px;" ></div></th>
-                <th>第三题<div id="num3" style="color: grey; font-size: 10px;" ></div></th>
-                <th>第四题<div id="num4" style="color: grey; font-size: 10px;" ></div></th>
+                <th>第一题<div id="num1" style="color: grey; font-size: 10px;"></div>
+                </th>
+                <th>第二题<div id="num2" style="color: grey; font-size: 10px;"></div>
+                </th>
+                <th>第三题<div id="num3" style="color: grey; font-size: 10px;"></div>
+                </th>
+                <th>第四题<div id="num4" style="color: grey; font-size: 10px;"></div>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -86,14 +96,17 @@
         </tbody>
     </table>
     <script>
+        var num = new Array(0,0,0,0);
         function renew() {
             location.reload();
         }
         async function getdate() {
             let res = await fetch('https://puzzle.qieee.top/api/rank')
             let data = await res.json()
-            data.sort((a, b) => (b.score[0].score + b.score[1].score + b.score[2].score + b.score[3].score) - (a.score[0].score + a.score[1].score + a.score[2].score + a.score[3].score));
+            data.sort((a, b) => (b.score[0].score + b.score[1].score + b.score[2].score + b.score[3].score)
+             - (a.score[0].score + a.score[1].score + a.score[2].score + a.score[3].score));
             var tbody = document.querySelector('tbody');
+
             for (var i = 0; i < data.length; i++) {
                 var tr = document.createElement('tr');
                 tbody.appendChild(tr);
@@ -117,12 +130,24 @@
                     else {
                         score1.setAttribute("class", "red");
                     }
+                    if (data[i].score[j].score == 10) {
+                        num[j % 4]++;
+                        console.log(num[j % 4])
+                    }
                     score1.innerHTML = data[i].score[j].score;
                     tr.appendChild(score1);
                     sum1 = sum1 + data[i].score[j].score;
                 }
                 sum.innerHTML = sum1;
             }
+            const NUM1 = document.getElementById('num1');
+            NUM1.innerHTML = num[0];
+            const NUM2 = document.getElementById('num2');
+            NUM2.innerHTML = num[1];
+            const NUM3 = document.getElementById('num3');
+            NUM3.innerHTML = num[2];
+            const NUM4 = document.getElementById('num4');
+            NUM4.innerHTML = num[3];
         }
         getdate();
     </script>
